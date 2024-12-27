@@ -1,0 +1,57 @@
+:root {
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 10px;
+}
+
+button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 5px;
+  &:hover {
+    background-color: #ddd;
+    scale: 1.05;
+  }
+  &:active {
+    background-color: #ccc;
+    scale: 0.95;
+  }
+  /* Tooltip styles */
+  &::after {
+    font-size: 0.75em;
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  &:hover::after {
+    opacity: 1;
+    visibility: visible;
+    font-size: 0.75em;
+  }
+  & > i {
+    pointer-events: none;
+  }
+
+  &#downloadBtn::after {
+    bottom: -150%;
+  }
+  &#copyBtn::after {
+    bottom: 110%;
+  }
+}

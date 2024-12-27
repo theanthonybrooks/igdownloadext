@@ -1,7 +1,5 @@
-function checkAndDownloadImage() {
+function handleAction(action) {
   const images = document.querySelectorAll("img")
-  let foundImage = false
-
   for (const img of images) {
     if (
       img.alt &&
@@ -11,36 +9,91 @@ function checkAndDownloadImage() {
       img.width === 150 &&
       img.height === 150
     ) {
-      foundImage = true
-
       const imageUrl = img.src
-      let filename = img.alt
+      const filename = img.alt
         .split("'s profile picture")
         .join("")
 
-      // Send the image details to the background script
-      chrome.runtime.sendMessage({
-        message: filename,
-        url: imageUrl,
-        filename: `${filename}.jpg`,
-      })
-
-      return // Exit after finding the first matching image
+      // console.log("action", action)
+      if (action === "download") {
+        chrome.runtime.sendMessage({
+          url: imageUrl,
+          filename: `${filename}.jpg`,
+        })
+        return {
+          success: true,
+          message: "Image download initiated.",
+        }
+      } else if (action === "copy") {
+        // console.log("Copying URL:", imageUrl)
+        return copyToClipboard(imageUrl)
+      }
     }
   }
 
-  if (!foundImage) {
-    chrome.runtime.sendMessage({
-      message: "nimf",
-    })
+  return {
+    success: false,
+    message: "No profile picture found.",
   }
 }
 
-// Listen for messages from the background script
+function copyToClipboard(text) {
+  // console.log("Attempting to copy:", text)
+
+  const textarea =
+    document.createElement("textarea")
+  textarea.value = text
+  textarea.style.position = "fixed"
+  textarea.style.opacity = "0"
+  document.body.appendChild(textarea)
+  textarea.select()
+
+  try {
+    const successful =
+      document.execCommand("copy")
+    // console.log(
+    //   "Fallback copy successful:",
+    //   successful
+    // )
+    return {
+      success: successful,
+      message: successful
+        ? "URL copied to clipboard."
+        : "Fallback copy failed.",
+    }
+  } catch (err) {
+    console.error(
+      "Fallback clipboard error:",
+      err
+    )
+    return {
+      success: false,
+      message: `Fallback clipboard error: ${err.message}`,
+    }
+  } finally {
+    document.body.removeChild(textarea)
+  }
+}
+
 chrome.runtime.onMessage.addListener(
   (request, sender, sendResponse) => {
-    if (request.action === "check_and_copy") {
-      checkAndDownloadImage()
+    if (
+      request.action === "download" ||
+      request.action === "copy"
+    ) {
+      const response = handleAction(
+        request.action
+      )
+      if (response instanceof Promise) {
+        response
+          .then(sendResponse)
+          .catch(sendResponse)
+        return true
+      } else {
+        sendResponse(response)
+      }
     }
   }
 )
+
+window.__contentScriptInjected = true
