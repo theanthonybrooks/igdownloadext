@@ -23,7 +23,7 @@ button {
     scale: 0.95;
   }
   /* Tooltip styles */
-  &::after {
+  /* &::after {
     font-size: 0.75em;
     content: attr(data-tooltip);
     position: absolute;
@@ -43,7 +43,7 @@ button {
     opacity: 1;
     visibility: visible;
     font-size: 0.75em;
-  }
+  } */
   & > i {
     pointer-events: none;
   }
