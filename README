@@ -1,1 +1,4 @@
-Basic extension that downloads profile pictures from instagram. Used for gathering logos for The Street Art List, though could potentially be useful in other instances. 
+Basic chrome extension that downloads profile pictures from IG. Used for gathering logos for The Street Art List, though could potentially be useful in other instances.  
+
+v.1.0 - Simple interface w/o popup. Only downloads by default and takes the username of the profile as the image filename(.jpg). 
+v1.2.1 - Added buttons/functionality for both download and copy to clipboard. 
